@@ -26,6 +26,8 @@ public class PenteBoardSquare {
 	private Color shadowGrey = new Color(169, 173, 142);
 	private Color whiteStoneTop = new Color(250, 250, 250);
 	
+	private boolean isWinningSquare = false;
+	
 	//Constructor
 	public PenteBoardSquare (int x, int y, int w, int h) {
 		xLoc = x;
@@ -117,6 +119,18 @@ public void drawMe(Graphics g) {
 		
 	}
 	
+	if(isWinningSquare == true) {
+		
+		Graphics2D g2 = (Graphics2D) g;
+		g2.setStroke(new BasicStroke(2));
+		
+		g2.setColor(Color.RED);
+		
+		g2.drawOval(xLoc + 2, yLoc + 2, sWidth-4, sHeight - 4);
+		
+		g2.setStroke(new BasicStroke(1));
+	}
+	
 	}
 //methods
 	public void setState(int newState) {
@@ -126,6 +140,26 @@ public void drawMe(Graphics g) {
 			sState = newState;
 		}
 	}
+	
+	public int getState() {
+		return sState;
+	}
 
 
+	public boolean isClicked (int clickX, int clickY) {
+		boolean didClick = false;
+		
+		if(xLoc < clickX && clickX < xLoc + sWidth) {
+			if(yLoc < clickY && clickY < yLoc + sHeight) {
+                didClick = true;
+			}                                         
+		}
+		
+		
+		return didClick;
+	}
+	
+	public void setWinningSquare(boolean newState) {
+		isWinningSquare = newState;
+	}
 }
