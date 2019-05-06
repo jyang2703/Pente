@@ -130,14 +130,6 @@ public class PenteGameBoard extends JPanel implements MouseListener {
 		gameOver = false;
 		
 		
-//		if(firstGame) {
-//			JOptionPane myPane = new JOptionPane();
-//		
-//			p1Name = JOptionPane.showInputDialog("Enter Player One Name or type 'c' for Computer");
-//			myPane.setLocation(bWidth, bHeight/2);
-//			myPane.setVisible(true);
-//			
-//		}
 			
 	        
 	        if(firstGame) {
@@ -231,7 +223,7 @@ public class PenteGameBoard extends JPanel implements MouseListener {
 						if(gameBoard[r+(upDown*4)][c+(rightLeft*4)].getState() == pt) {
 							//if(gameBoard[r+(upDown*5)][c+(rightLeft*5)].getState() == pt) {	
 							//if(pt == this.PLAYER1_TURN) {
-								JOptionPane.showMessageDialog(null, "Five in a row, " + p1Name + "wins! ");
+								//JOptionPane.showMessageDialog(null, "Five in a row, " + p1Name + "wins! ");
 								
 								five = true;
 								gameBoard[r][c].setWinningSquare(true);

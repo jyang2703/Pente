@@ -8,7 +8,7 @@ public class CMObject {
 	
 	
 	//methods
-	public void setPriorit(int newP) {
+	public void setPriority(int newP) {
 		priority = newP;
 		
 	}

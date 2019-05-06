@@ -10,6 +10,7 @@ public class PenteGameRunner {
 	
 	public static void main(String[] args) {
 		
+		
 		int gWidth = 19*38;
 		int gHeight = 19*38;
 		int sbWidth = (int)(gWidth * 0.50);
