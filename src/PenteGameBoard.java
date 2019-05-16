@@ -17,14 +17,14 @@ public class PenteGameBoard extends JPanel implements MouseListener {
 	public static final int INNER_END = 11;
 	public static final int PLAYER1_TURN = 1;
 	public static final int PLAYER2_TURN = -1;
-	public static final int MAX_CAPTURES = 5;
-	public static final int SLEEP_TIME = 100;
+	public static final int MAX_CAPTURES = 15;
+	public static final int SLEEP_TIME = 500;
 	
 	private int bWidth, bHeight;
 	
 	private PenteBoardSquare testSquare;
 	private int squareW, squareH;
-	private JFrame myFrame;
+
 	
 	private PenteBoardSquare [] [] gameBoard;
 	private PenteScore myScoreBoard;
@@ -51,6 +51,9 @@ public class PenteGameBoard extends JPanel implements MouseListener {
 		bHeight = h;
 		myScoreBoard = sb;
 		
+		p1Captures = 0;
+		p2Captures = 0;
+		
 		this.setSize(w,h);;
 		this.setBackground(Color.GREEN);
 		
@@ -72,13 +75,6 @@ public class PenteGameBoard extends JPanel implements MouseListener {
 					}
 				}
 				
-				/*if((row+col)%2 == 0) {
-					gameBoard[row][col].setState(BLACKSTONE);
-				
-				} else {
-					gameBoard[row][col].setState(WHITESTONE);
-				}
-			*/	
 			}
 			
 		}
@@ -117,7 +113,6 @@ public class PenteGameBoard extends JPanel implements MouseListener {
 				gameBoard[row][col].setWinningSquare(false);
 			}
 		}
-		//this.paintImmediately(0, 0, bWidth, bHeight);
 		repaint();
 	}
 	
@@ -135,7 +130,7 @@ public class PenteGameBoard extends JPanel implements MouseListener {
 	        if(firstGame) {
 	        		p1Name = JOptionPane.showInputDialog("Name of player 1 (or type 'c' for computer)");
 	        		if(p1Name != null && (p1Name.toLowerCase().equals("c") || p1Name.toLowerCase().equals("computer") ||p1Name.toLowerCase().equals("comp"))) {
-	        			player1IsComputer = true;System.out.println("PLAYER 1 is a Computer");
+	        			player1IsComputer = true;
 	        		p1ComputerPlayer = new ComputerMoveGenerator(this, BLACKSTONE);
 	        		}
 	        	
@@ -185,7 +180,6 @@ public class PenteGameBoard extends JPanel implements MouseListener {
 	
 	public boolean fiveInARow(int whichPlayer) {
 		
-		
 		boolean isFive = false;
 		
 		for(int row = 0; row < NUM_SQUARES_SIDE; row++) {
@@ -221,16 +215,14 @@ public class PenteGameBoard extends JPanel implements MouseListener {
 				if(gameBoard[r+(upDown*2)][c+(rightLeft*2)].getState() == pt) {
 					if(gameBoard[r+(upDown*3)][c+(rightLeft*3)].getState() == pt) {
 						if(gameBoard[r+(upDown*4)][c+(rightLeft*4)].getState() == pt) {
-							//if(gameBoard[r+(upDown*5)][c+(rightLeft*5)].getState() == pt) {	
-							//if(pt == this.PLAYER1_TURN) {
-								//JOptionPane.showMessageDialog(null, "Five in a row, " + p1Name + "wins! ");
-								
+							
 								five = true;
 								gameBoard[r][c].setWinningSquare(true);
-								gameBoard[r+(upDown*2)][c+(upDown*2)].setWinningSquare(true);
-								gameBoard[r+(upDown*3)][c+(upDown*3)].setWinningSquare(true);
-								gameBoard[r+(upDown*4)][c+(upDown*4)].setWinningSquare(true);
-								//gameBoard[r+(upDown*5)][c+(upDown*5)].setWinningSquare(true);
+								gameBoard[r+upDown][c+rightLeft].setWinningSquare(true);
+								gameBoard[r+(upDown*2)][c+(rightLeft*2)].setWinningSquare(true);
+								gameBoard[r+(upDown*3)][c+(rightLeft*3)].setWinningSquare(true);
+								gameBoard[r+(upDown*4)][c+(rightLeft*4)].setWinningSquare(true);
+								
 								}
 						}
 					}
@@ -241,7 +233,6 @@ public class PenteGameBoard extends JPanel implements MouseListener {
 	
 		return five;
 		} catch (ArrayIndexOutOfBoundsException e) {
-			//System.out.println("Error " + e.getStackTrace());
 			return false;
 		}
 		
@@ -252,7 +243,7 @@ public class PenteGameBoard extends JPanel implements MouseListener {
 		
 		if(whichPlayer == this.PLAYER1_TURN) {
             if(this.p1Captures >= MAX_CAPTURES) {
-                //we win!!
+                
                 JOptionPane.showMessageDialog(null, "Congratulations: " + p1Name +  " wins!!" +
                         "\n with " + p1Captures + " captures");
                 gameOver = true;
@@ -285,6 +276,7 @@ public class PenteGameBoard extends JPanel implements MouseListener {
 	
 	 
 public void checkClick(int clickX, int clickY) {
+	
 	if(!gameOver) {
 	
 	for(int row = 0; row < NUM_SQUARES_SIDE; row++) {
@@ -292,15 +284,15 @@ public void checkClick(int clickX, int clickY) {
 			
 			boolean squareClicked = gameBoard[row][col].isClicked(clickX, clickY);
 			if(squareClicked) {
-				System.out.println("Clicked square at [" + row + ", " + col + "]");
+				//System.out.println("Clicked square at [" + row + ", " + col + "]");
 				if(gameBoard[row][col].getState() == EMPTY) {
 					if(!darkSquareProblem(row, col)) {
-					
 					gameBoard[row][col].setState(playerTurn);
+					this.paintImmediately(0, 0, bWidth, bHeight);
 					checkForCaptures(row, col, playerTurn);
 					this.repaint();
 					
-					this.paintImmediately(0, 0, bWidth, bHeight);
+					//this.paintImmediately(0, 0, bWidth, bHeight);
 					
 					checkForWin(playerTurn);
 					this.changePlayerTurn();
@@ -341,13 +333,9 @@ public void checkForComputerMove(int whichPlayer) {
 		
 		int newR = nextMove[0];
 		int newC = nextMove[1];
-		
 		gameBoard[newR][newC].setState(playerTurn);
 		this.paintImmediately(0, 0, bWidth, bHeight);
-		//this.repaint();
 		checkForCaptures(newR, newC, playerTurn);
-		//this.repaint();
-		
 		checkForWin(playerTurn);
 		
 		if(!gameOver) {
@@ -357,10 +345,12 @@ public void checkForComputerMove(int whichPlayer) {
 	}
 	this.repaint();
 }
+
 public boolean darkSquareProblem(int r, int c) {
+	
 	boolean dsp = false;
 	
-	if(darkStoneMove2Taken == false && playerTurn == BLACKSTONE )
+	if((!darkStoneMove2Taken) && (playerTurn == BLACKSTONE))
 	{
 		
 			if ( (r >= INNER_START && r <= INNER_END) && (
@@ -369,6 +359,25 @@ public boolean darkSquareProblem(int r, int c) {
 				
 			} else {
 				darkStoneMove2Taken = true;
+			}
+	}
+	
+	return dsp;
+}
+
+public boolean darkSquareProblemComputerMoveList(int r, int c) {
+	
+	boolean dsp = false;
+	
+	if((!darkStoneMove2Taken) && (playerTurn == BLACKSTONE))
+	{
+		
+			if ( (r >= INNER_START && r <= INNER_END) && (
+					c >= INNER_START && c <= INNER_END)) {
+					dsp = true;
+				
+			} else {
+				
 			}
 	}
 	
@@ -385,21 +394,7 @@ public boolean darkSquareProblem(int r, int c) {
 			didCapture = checkForCaptures(r, c, pt, rl, uD);
 		}
 	}
-		/*didCapture = checkForCaptures(r, c, pt, 0, 1);
-		didCapture = checkForCaptures(r, c, pt, 0, -1);
 		
-		//Vertical Checks
-		didCapture = checkForCaptures(r, c, pt, 1, 0);
-		didCapture = checkForCaptures(r, c, pt, -1, 0);
-		
-		//Diagonal Part 1
-		didCapture = checkForCaptures(r, c, pt, 1, -1);
-		didCapture = checkForCaptures(r, c, pt, -1, 1);
-		
-		//Diagonal Part 2
-		didCapture = checkForCaptures(r, c, pt, 1, 1);
-		didCapture = checkForCaptures(r, c, pt, -1, -1);
-		*/
 	}
 	
 	public boolean checkForCaptures(int r, int c, int pt, int upDown, int rightLeft) {
@@ -424,15 +419,12 @@ public boolean darkSquareProblem(int r, int c) {
 							myScoreBoard.setCaptures(p2Captures, playerTurn);
 							
 						}
-						
-						
-						}
 					}
 				}
+			}
 		
 		return cap;
 		} catch (ArrayIndexOutOfBoundsException e) {
-			//System.out.println("Error " + e.getStackTrace());
 			return false;
 		}
 		
@@ -531,6 +523,9 @@ public boolean darkSquareProblem(int r, int c) {
 	
 	public PenteBoardSquare[] [] getBoard() {
 		return gameBoard;
+	}
+	public boolean getDarkStoneMove2Taken() {
+		return darkStoneMove2Taken;
 	}
 	
 	
